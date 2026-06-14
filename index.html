@@ -638,6 +638,7 @@ function saveWorkout() {
   state.workouts[id] = { id:id, name:name, icon:icon, exercises:JSON.parse(JSON.stringify(state.builderExercises)) };
   localStorage.setItem("mitch_workouts", JSON.stringify(state.workouts));
   showToast("Workout saved!", "success");
+  pushWorkoutsToGitHub();
   goHome();
 }
 
@@ -646,6 +647,7 @@ function confirmDeleteWorkout() {
     if (state.currentWorkoutId && state.workouts[state.currentWorkoutId]) {
       delete state.workouts[state.currentWorkoutId];
       localStorage.setItem("mitch_workouts", JSON.stringify(state.workouts));
+      pushWorkoutsToGitHub();
       showToast("Workout deleted", "");
       goHome();
     }
