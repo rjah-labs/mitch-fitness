@@ -760,6 +760,7 @@ function openSession(workoutId) {
 
   document.getElementById("session-content").innerHTML = html;
   document.getElementById("session-scroll").scrollTop = 0;
+  sessionActive = true;
   showScreen("session");
   // Check for autosave
   var draft = checkForAutosave(workoutId);
@@ -902,6 +903,7 @@ function saveSession() {
   state.sessions[key] = sessionObj;
   localStorage.setItem("mitch_sessions", JSON.stringify(state.sessions));
   clearAutosave(state.currentWorkoutId);
+  sessionActive = false;
 
   if (state.token) {
     pushSessionToGitHub(key, sessionObj);
@@ -1100,7 +1102,7 @@ function showScreen(name) {
   document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
   document.getElementById("screen-" + name).classList.add("active");
 }
-function goHome() { stopTimer(); showScreen("home"); renderHome(); }
+function goHome() { stopTimer(); sessionActive = false; showScreen("home"); renderHome(); }
 function goSession() { showScreen("session"); }
 
 // ═══ ANALYSIS ═══
@@ -1605,6 +1607,7 @@ function showRecoverBanner(draft, workoutId) {
 
 function dismissRecover() {
   clearAutosave(state.currentWorkoutId);
+  sessionActive = false;
   state.pendingDraft = null;
   var banner = document.getElementById("recover-banner");
   if (banner) banner.remove();
@@ -1616,6 +1619,18 @@ function doRestore() {
   if (state.pendingDraft) restoreAutosave(state.pendingDraft);
   state.pendingDraft = null;
 }
+
+
+// ═══ BEFOREUNLOAD GUARD ═══
+var sessionActive = false;
+
+window.addEventListener('beforeunload', function(e) {
+  if (sessionActive && state.currentWorkoutId && checkForAutosave(state.currentWorkoutId)) {
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  }
+});
 
 // ═══ INIT ═══
 updateHeroSub();
