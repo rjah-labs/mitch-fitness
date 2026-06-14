@@ -240,6 +240,17 @@
   .syncing { animation: pulse 1s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
 
+
+  /* AUTOSAVE */
+  .autosave-bar { position: fixed; top: 0; left: 0; right: 0; background: rgba(163,113,247,0.12); border-bottom: 1px solid rgba(163,113,247,0.3); padding: 6px 16px; display: none; align-items: center; justify-content: space-between; z-index: 50; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 0.06em; }
+  .autosave-bar.show { display: flex; }
+  .autosave-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); margin-right: 6px; animation: pulse 1.5s ease-in-out infinite; }
+  .recover-banner { background: rgba(163,113,247,0.1); border: 1px solid var(--purple); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+  .recover-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--purple); margin-bottom: 6px; }
+  .recover-text { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.5; }
+  .recover-actions { display: flex; gap: 8px; }
+  .recover-btn { flex: 1; padding: 10px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.06em; cursor: pointer; border: 1px solid var(--border2); background: var(--surface3); color: var(--text-dim); }
+  .recover-btn.primary { border-color: var(--purple); color: var(--purple); background: var(--purple-dim); }
   .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
   .confirm-overlay.show { display: flex; }
   .confirm-box { background: var(--surface2); border: 1px solid var(--border2); border-radius: 14px 14px 0 0; padding: 20px; width: 100%; max-width: 500px; }
@@ -253,6 +264,11 @@
 <body>
 
 <div class="toast" id="toast"></div>
+<div class="autosave-bar" id="autosave-bar">
+  <div style="display:flex;align-items:center"><div class="autosave-dot"></div>AUTOSAVED</div>
+  <span id="autosave-time"></span>
+</div>
+
 <div class="rest-timer" id="rest-timer">
   <div>
     <div class="rest-timer-label">REST TIMER</div>
@@ -347,7 +363,7 @@
     <div id="session-content"></div>
     <div class="session-notes-area">
       <div class="session-notes-label">Session notes</div>
-      <textarea class="session-notes-input" id="session-notes" placeholder="How did it feel? Any PRs? Notes..."></textarea>
+      <textarea class="session-notes-input" id="session-notes" placeholder="How did it feel? Any PRs? Notes..." oninput="triggerAutosave()"></textarea>
     </div>
     <button class="save-btn" onclick="saveSession()">SAVE SESSION</button>
   </div>
@@ -745,6 +761,9 @@ function openSession(workoutId) {
   document.getElementById("session-content").innerHTML = html;
   document.getElementById("session-scroll").scrollTop = 0;
   showScreen("session");
+  // Check for autosave
+  var draft = checkForAutosave(workoutId);
+  if (draft) showRecoverBanner(draft, workoutId);
 }
 
 function renderSetRow(ei, si) {
@@ -766,6 +785,7 @@ function setVal(ei, si, field, val) {
   if (!n || !state.sessionData[n]) return;
   while (state.sessionData[n].sets.length <= si) state.sessionData[n].sets.push({ kg:"", reps:"", done:false });
   state.sessionData[n].sets[si][field] = val;
+  triggerAutosave();
 }
 
 function markDone(ei, si) {
@@ -787,6 +807,7 @@ function markDone(ei, si) {
     var w = state.workouts[state.currentWorkoutId];
     var restSec = w && w.exercises[ei] ? (w.exercises[ei].restSec || 90) : 90;
     if (restSec > 0) startTimer(restSec);
+    triggerAutosave();
   } else {
     btn.classList.remove("done");
     if (kEl) kEl.classList.remove("completed");
@@ -808,6 +829,7 @@ function markCardioDone(ei) {
     if (el) state.sessionData[n].values[f] = el.value;
   });
   showToast("Cardio logged!", "success");
+  triggerAutosave();
 }
 
 function addSet(ei, restSec) {
@@ -825,6 +847,7 @@ function addSet(ei, restSec) {
     row.innerHTML = renderSetRow(ei, si);
     parent.parentNode.insertBefore(row.firstChild, addBtn);
   }
+  triggerAutosave();
 }
 
 // ═══ PR ═══
@@ -878,6 +901,7 @@ function saveSession() {
 
   state.sessions[key] = sessionObj;
   localStorage.setItem("mitch_sessions", JSON.stringify(state.sessions));
+  clearAutosave(state.currentWorkoutId);
 
   if (state.token) {
     pushSessionToGitHub(key, sessionObj);
@@ -1416,6 +1440,182 @@ function buildVolumeChart(sessions) {
 window.renderProgressionChart = function(exName) {
   renderProgressionChart(exName, Object.values(state.sessions));
 };
+
+
+// ═══ AUTOSAVE ═══
+var autosaveTimer = null;
+
+function getAutosaveKey(workoutId) {
+  return "mitch_autosave_" + workoutId;
+}
+
+function triggerAutosave() {
+  if (!state.currentWorkoutId) return;
+  if (autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(function() { doAutosave(); }, 800);
+}
+
+function doAutosave() {
+  if (!state.currentWorkoutId) return;
+  var w = state.workouts[state.currentWorkoutId];
+  if (!w) return;
+
+  // Collect all current field values from DOM
+  var snapshot = {};
+  w.exercises.forEach(function(ex, ei) {
+    if (state.sessionData[ex.name]) {
+      var exData = JSON.parse(JSON.stringify(state.sessionData[ex.name]));
+      if (!ex.isCardio) {
+        exData.sets.forEach(function(set, si) {
+          var kgEl = document.getElementById("kg-" + ei + "-" + si);
+          var repsEl = document.getElementById("reps-" + ei + "-" + si);
+          if (kgEl && kgEl.value) set.kg = kgEl.value;
+          if (repsEl && repsEl.value) set.reps = repsEl.value;
+        });
+      } else {
+        var fields = exData.fields || [];
+        fields.forEach(function(f, fi) {
+          var el = document.getElementById("cardio-" + ei + "-" + fi);
+          if (el && el.value) {
+            if (!exData.values) exData.values = {};
+            exData.values[f] = el.value;
+          }
+        });
+      }
+      snapshot[ex.name] = exData;
+    }
+  });
+
+  var notesEl = document.getElementById("session-notes");
+  var draft = {
+    workoutId: state.currentWorkoutId,
+    date: new Date().toISOString().split('T')[0],
+    savedAt: new Date().toISOString(),
+    exercises: snapshot,
+    notes: notesEl ? notesEl.value : ""
+  };
+
+  localStorage.setItem(getAutosaveKey(state.currentWorkoutId), JSON.stringify(draft));
+
+  // Show autosave indicator
+  var bar = document.getElementById("autosave-bar");
+  var timeEl = document.getElementById("autosave-time");
+  if (bar) {
+    var t = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    if (timeEl) timeEl.textContent = t;
+    bar.classList.add("show");
+    setTimeout(function() { bar.classList.remove("show"); }, 2000);
+  }
+}
+
+function checkForAutosave(workoutId) {
+  var key = getAutosaveKey(workoutId);
+  var draft = localStorage.getItem(key);
+  if (!draft) return null;
+  try {
+    var parsed = JSON.parse(draft);
+    var today = new Date().toISOString().split('T')[0];
+    // Only recover if from today
+    if (parsed.date === today) return parsed;
+    // If older than today, clear it
+    localStorage.removeItem(key);
+    return null;
+  } catch(e) {
+    return null;
+  }
+}
+
+function clearAutosave(workoutId) {
+  localStorage.removeItem(getAutosaveKey(workoutId));
+}
+
+function restoreAutosave(draft) {
+  var w = state.workouts[state.currentWorkoutId];
+  if (!w) return;
+
+  // Restore notes
+  var notesEl = document.getElementById("session-notes");
+  if (notesEl && draft.notes) notesEl.value = draft.notes;
+
+  // Restore exercise data
+  w.exercises.forEach(function(ex, ei) {
+    var saved = draft.exercises && draft.exercises[ex.name];
+    if (!saved) return;
+
+    if (ex.isCardio) {
+      state.sessionData[ex.name] = saved;
+      var fields = saved.fields || [];
+      fields.forEach(function(f, fi) {
+        var el = document.getElementById("cardio-" + ei + "-" + fi);
+        if (el && saved.values && saved.values[f]) el.value = saved.values[f];
+      });
+      if (saved.done) {
+        var btn = document.getElementById("cdone-" + ei);
+        if (btn) { btn.classList.add("done"); btn.textContent = "✓ DONE"; }
+      }
+    } else {
+      state.sessionData[ex.name] = saved;
+      saved.sets.forEach(function(set, si) {
+        var kgEl = document.getElementById("kg-" + ei + "-" + si);
+        var repsEl = document.getElementById("reps-" + ei + "-" + si);
+        var doneBtn = document.getElementById("done-" + ei + "-" + si);
+
+        // Add extra rows if needed
+        if (!kgEl) {
+          addSet(ei, ex.restSec || 90);
+          kgEl = document.getElementById("kg-" + ei + "-" + si);
+          repsEl = document.getElementById("reps-" + ei + "-" + si);
+          doneBtn = document.getElementById("done-" + ei + "-" + si);
+        }
+
+        if (kgEl && set.kg) kgEl.value = set.kg;
+        if (repsEl && set.reps) repsEl.value = set.reps;
+        if (set.done && doneBtn) {
+          doneBtn.classList.add("done");
+          if (kgEl) kgEl.classList.add("completed");
+          if (repsEl) repsEl.classList.add("completed");
+        }
+      });
+    }
+  });
+
+  showToast("Session restored ✓", "success");
+}
+
+function showRecoverBanner(draft, workoutId) {
+  var savedAt = new Date(draft.savedAt);
+  var timeStr = savedAt.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+  var banner = document.createElement('div');
+  banner.className = 'recover-banner';
+  banner.id = 'recover-banner';
+  banner.innerHTML =
+    '<div class="recover-title">Unsaved session found</div>' +
+    '<div class="recover-text">You have an autosaved session from ' + timeStr + ' today. Want to restore it?</div>' +
+    '<div class="recover-actions">' +
+      '<button class="recover-btn" onclick="dismissRecover()">START FRESH</button>' +
+      '<button class="recover-btn primary" onclick="doRestore()">RESTORE</button>' +
+    '</div>';
+
+  // Store draft for restore
+  state.pendingDraft = draft;
+
+  var scrollEl = document.getElementById("session-scroll");
+  if (scrollEl) scrollEl.insertBefore(banner, scrollEl.firstChild);
+}
+
+function dismissRecover() {
+  clearAutosave(state.currentWorkoutId);
+  state.pendingDraft = null;
+  var banner = document.getElementById("recover-banner");
+  if (banner) banner.remove();
+}
+
+function doRestore() {
+  var banner = document.getElementById("recover-banner");
+  if (banner) banner.remove();
+  if (state.pendingDraft) restoreAutosave(state.pendingDraft);
+  state.pendingDraft = null;
+}
 
 // ═══ INIT ═══
 updateHeroSub();
