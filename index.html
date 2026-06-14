@@ -241,6 +241,14 @@
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
 
 
+
+  /* EDIT SESSION */
+  .history-item-actions { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .history-edit-btn { flex: 1; padding: 9px; background: var(--purple-dim); border: 1px solid var(--purple); border-radius: 8px; color: var(--purple); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.06em; cursor: pointer; text-align: center; }
+  .history-delete-btn { padding: 9px 14px; background: var(--red-dim); border: 1px solid var(--red); border-radius: 8px; color: var(--red); font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.06em; cursor: pointer; }
+  .editing-banner { background: var(--purple-dim); border: 1px solid var(--purple); border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .editing-banner-text { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 0.06em; }
+  .editing-banner-date { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   /* AUTOSAVE */
   .autosave-bar { position: fixed; top: 0; left: 0; right: 0; background: rgba(163,113,247,0.12); border-bottom: 1px solid rgba(163,113,247,0.3); padding: 6px 16px; display: none; align-items: center; justify-content: space-between; z-index: 50; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 0.06em; }
   .autosave-bar.show { display: flex; }
@@ -872,7 +880,9 @@ function saveSession() {
   var w = state.workouts[state.currentWorkoutId];
   if (!w) return;
   var notes = document.getElementById("session-notes").value;
-  var key = state.currentWorkoutId + "_" + Date.now();
+  // If editing an existing session, reuse its key; otherwise create new
+  var key = editingSessionKey || (state.currentWorkoutId + "_" + Date.now());
+  editingSessionKey = null;
   var exercises = {};
 
   w.exercises.forEach(function(ex, ei) {
@@ -1020,6 +1030,7 @@ function showHistory() {
   } else {
     var html = '<div style="padding:16px">';
     sessions.forEach(function(entry) {
+      var sessionKey = entry[0];
       var session = entry[1];
       var date = new Date(session.date).toLocaleDateString("en-AU", { weekday:"short", day:"numeric", month:"short", year:"numeric" });
       html += '<div class="history-item"><div class="history-date">' + date.toUpperCase() + "</div>";
@@ -1042,6 +1053,10 @@ function showHistory() {
         }
       });
       if (session.notes) html += '<div style="font-size:12px;color:var(--text-muted);margin-top:8px;font-style:italic">"' + session.notes + '"</div>';
+      html += '<div class="history-item-actions">';
+      html += '<button class="history-edit-btn" onclick="editSession(this.dataset.key)" data-key="' + sessionKey + '">✏ EDIT SESSION</button>';
+      html += '<button class="history-delete-btn" onclick="deleteSession(this.dataset.key)" data-key="' + sessionKey + '">✕</button>';
+      html += '</div>';
       html += "</div>";
     });
     html += "</div>";
@@ -1620,6 +1635,136 @@ function doRestore() {
   state.pendingDraft = null;
 }
 
+
+
+// ═══ EDIT SESSION ═══
+var editingSessionKey = null;
+
+function editSession(sessionKey) {
+  var session = state.sessions[sessionKey];
+  if (!session) return;
+  var workoutId = session.workoutId;
+  var w = state.workouts[workoutId];
+  if (!w) { showToast("Workout template not found", "error"); return; }
+
+  editingSessionKey = sessionKey;
+  state.currentWorkoutId = workoutId;
+  state.sessionData = {};
+
+  document.getElementById("session-title").textContent = w.name;
+  document.getElementById("session-notes").value = session.notes || "";
+
+  var sessionDate = new Date(session.date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  var html = '<div class="editing-banner">' +
+    '<div><div class="editing-banner-text">✏ EDITING SAVED SESSION</div>' +
+    '<div class="editing-banner-date">' + sessionDate + '</div></div>' +
+    '<button class="topbar-action" onclick="cancelEdit()">CANCEL</button>' +
+    '</div>';
+
+  w.exercises.forEach(function(ex, ei) {
+    var savedSets = session.exercises && session.exercises[ex.name];
+    state.sessionData[ex.name] = { restSec: ex.restSec || 90, sets: [] };
+
+    if (ex.isCardio) {
+      var cFields = ex.cardioFields || ["distance","time","intensity"];
+      var cIcons = { km:"📏", min:"⏱", pace:"🏃", speed:"⚡", resistance:"🎛", m:"📏", spm:"🚣", floors:"🪜", level:"🎛" };
+      var savedCardio = savedSets && savedSets.isCardio ? savedSets : null;
+      html += '<div class="cardio-block"><div class="cardio-header">';
+      html += '<span class="cardio-icon">' + ex.icon + "</span>";
+      html += '<span class="cardio-name">' + ex.name + "</span></div>";
+      html += '<div class="cardio-inputs">';
+      cFields.forEach(function(f, fi) {
+        var savedVal = savedCardio && savedCardio.values ? (savedCardio.values[f] || "") : "";
+        html += '<div class="cardio-input-wrap">';
+        html += '<input class="cardio-input" type="number" inputmode="decimal" placeholder="—" id="cardio-' + ei + '-' + fi + '" value="' + savedVal + '">';
+        html += '<div class="cardio-lbl">' + (cIcons[f] || "") + " " + f.toUpperCase() + "</div></div>";
+      });
+      html += "</div>";
+      var doneClass = savedCardio && savedCardio.done ? "done" : "";
+      html += '<div class="cardio-done-row"><button class="cardio-done-btn ' + doneClass + '" id="cdone-' + ei + '" onclick="markCardioDone(' + ei + ')">' + (doneClass ? "✓ DONE" : "✓ MARK DONE") + '</button></div>';
+      html += "</div>";
+      state.sessionData[ex.name] = {
+        isCardio: true,
+        fields: cFields,
+        done: savedCardio ? savedCardio.done : false,
+        values: savedCardio ? (savedCardio.values || {}) : {}
+      };
+    } else {
+      var sets = Array.isArray(savedSets) && savedSets.length ? savedSets : [];
+      var numSets = Math.max(sets.length, ex.defaultSets || 4);
+      var pr = getPR(ex.name);
+      html += '<div class="exercise-block"><div class="exercise-header">';
+      html += '<div class="exercise-name-text">' + ex.icon + " " + ex.name + "</div>";
+      if (pr) html += '<span class="exercise-pr-chip">PR ' + pr + "kg</span>";
+      html += '<span class="exercise-target-text">' + (ex.defaultSets||4) + "x" + (ex.defaultReps||10) + "</span></div>";
+      html += '<div class="sets-area"><div class="sets-labels"><span class="sets-label">SET</span><span class="sets-label">KG</span><span class="sets-label">REPS</span><span class="sets-label"></span></div>';
+      for (var s = 0; s < numSets; s++) {
+        var set = sets[s] || { kg:"", reps:"", done:false };
+        html += renderSetRow(ei, s);
+        state.sessionData[ex.name].sets.push({ kg: set.kg||"", reps: set.reps||"", done: set.done||false });
+      }
+      html += '<button class="add-set-btn" onclick="addSet(' + ei + ',' + (ex.restSec||90) + ')">+ ADD SET</button>';
+      html += "</div></div>";
+    }
+  });
+
+  document.getElementById("session-content").innerHTML = html;
+  document.getElementById("session-scroll").scrollTop = 0;
+  sessionActive = true;
+  showScreen("session");
+  // Restore saved values and done states into rendered inputs
+  w.exercises.forEach(function(ex, ei) {
+    var savedSets = session.exercises && session.exercises[ex.name];
+    if (!ex.isCardio && Array.isArray(savedSets)) {
+      savedSets.forEach(function(set, si) {
+        var kgEl = document.getElementById("kg-" + ei + "-" + si);
+        var repsEl = document.getElementById("reps-" + ei + "-" + si);
+        var doneBtn = document.getElementById("done-" + ei + "-" + si);
+        if (kgEl && set.kg) { kgEl.value = set.kg; }
+        if (repsEl && set.reps) { repsEl.value = set.reps; }
+        if (set.done && doneBtn) {
+          doneBtn.classList.add("done");
+          if (kgEl) kgEl.classList.add("completed");
+          if (repsEl) repsEl.classList.add("completed");
+        }
+      });
+    }
+  });
+}
+
+function cancelEdit() {
+  editingSessionKey = null;
+  sessionActive = false;
+  showHistory();
+}
+
+function deleteSession(sessionKey) {
+  showConfirm(
+    "Delete session?",
+    "This will permanently remove this session from your history and analysis.",
+    function() {
+      // Delete from GitHub if token available
+      if (state.token) {
+        var path = "data/sessions/" + sessionKey + ".json";
+        fetch("https://api.github.com/repos/" + state.repo + "/contents/" + path, {
+          headers: { "Authorization": "token " + state.token, "Accept": "application/vnd.github.v3+json" }
+        }).then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(file) {
+          if (!file || !file.sha) return;
+          fetch("https://api.github.com/repos/" + state.repo + "/contents/" + path, {
+            method: "DELETE",
+            headers: { "Authorization": "token " + state.token, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "Delete session: " + sessionKey, sha: file.sha })
+          });
+        }).catch(function() {});
+      }
+      delete state.sessions[sessionKey];
+      localStorage.setItem("mitch_sessions", JSON.stringify(state.sessions));
+      showToast("Session deleted", "");
+      showHistory();
+    }
+  );
+}
 
 // ═══ BEFOREUNLOAD GUARD ═══
 var sessionActive = false;
