@@ -179,6 +179,63 @@
   .rest-timer-close { background: none; border: 1px solid var(--border2); color: var(--text-muted); border-radius: 6px; padding: 6px 12px; font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; }
 
   .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border2); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 4px; }
+
+  /* ANALYSIS */
+  .analysis-stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 16px; }
+  .analysis-stat { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+  .analysis-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 34px; letter-spacing: 0.03em; line-height: 1; }
+  .analysis-stat-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; margin-top: 4px; }
+  .analysis-stat-val.purple { color: var(--purple); }
+  .analysis-stat-val.green { color: var(--green-light); }
+  .analysis-stat-val.amber { color: var(--amber); }
+  .analysis-stat-val.pink { color: var(--pink); }
+
+  .analysis-section { margin-bottom: 20px; }
+  .analysis-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.04em; margin-bottom: 10px; color: var(--text-dim); }
+
+  .pr-list { display: flex; flex-direction: column; gap: 8px; }
+  .pr-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; }
+  .pr-name { font-size: 13px; color: var(--text); flex: 1; }
+  .pr-val { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--amber); font-weight: 500; }
+  .pr-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  .chart-wrap { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; overflow: hidden; }
+  .chart-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .chart-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+  .chart-select { background: var(--surface3); border: 1px solid var(--border2); border-radius: 6px; padding: 6px 10px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 11px; margin-bottom: 12px; width: 100%; }
+  .chart-select:focus { outline: none; border-color: var(--blue); }
+
+  .bar-chart { display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; }
+  .bar-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); width: 70px; flex-shrink: 0; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; background: var(--surface3); border-radius: 4px; height: 24px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; display: flex; align-items: center; padding-left: 8px; }
+  .bar-fill-val { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.8); white-space: nowrap; }
+
+  .line-chart { position: relative; width: 100%; height: 120px; }
+  .line-chart svg { width: 100%; height: 100%; }
+
+  .freq-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+  .freq-cell { aspect-ratio: 1; border-radius: 3px; background: var(--surface3); }
+  .freq-cell.l1 { background: rgba(163,113,247,0.25); }
+  .freq-cell.l2 { background: rgba(163,113,247,0.5); }
+  .freq-cell.l3 { background: rgba(163,113,247,0.75); }
+  .freq-cell.l4 { background: var(--purple); }
+  .freq-day-labels { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-bottom: 6px; }
+  .freq-day-lbl { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-muted); text-align: center; }
+
+  .workout-breakdown { display: flex; flex-direction: column; gap: 6px; }
+  .wb-item { display: flex; align-items: center; gap: 10px; }
+  .wb-name { font-size: 12px; color: var(--text-dim); flex: 1; }
+  .wb-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--purple); }
+  .wb-bar { height: 6px; border-radius: 3px; background: var(--purple); opacity: 0.6; margin-top: 2px; }
+
+  .no-data { text-align:center; padding: 2rem; color: var(--text-muted); font-size: 13px; }
+
+  .link-banner { background: var(--surface2); border: 1px solid var(--purple); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .link-banner-text { font-size: 13px; color: var(--text-dim); }
+  .link-banner-url { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--purple); margin-top: 2px; }
+  .link-banner-copy { background: none; border: 1px solid var(--purple); color: var(--purple); border-radius: 6px; padding: 6px 12px; font-family: 'DM Mono', monospace; font-size: 10px; cursor: pointer; white-space: nowrap; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .syncing { animation: pulse 1s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
@@ -214,11 +271,24 @@
   </div>
 </div>
 
+<!-- ANALYSIS -->
+<div class="screen" id="screen-analysis">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goHome()">&#8592;</button>
+    <div class="topbar-title">Analysis</div>
+    <button class="topbar-action" id="analysis-sync-btn" onclick="syncFromGitHub();setTimeout(function(){renderAnalysis();},2000)">SYNC</button>
+  </div>
+  <div class="scroll" id="analysis-scroll">
+    <div id="analysis-content"></div>
+  </div>
+</div>
+
 <!-- HOME -->
 <div class="screen active" id="screen-home">
   <div class="topbar">
     <div class="topbar-title">Mitch Fitness</div>
     <button class="topbar-action syncing" id="sync-btn" onclick="syncFromGitHub()">SYNC</button>
+    <button class="topbar-action purple" onclick="showScreen('analysis');renderAnalysis()">ANALYSIS</button>
     <button class="topbar-action" onclick="toggleSetup()">SETUP</button>
   </div>
   <div class="scroll">
@@ -1008,6 +1078,344 @@ function showScreen(name) {
 }
 function goHome() { stopTimer(); showScreen("home"); renderHome(); }
 function goSession() { showScreen("session"); }
+
+// ═══ ANALYSIS ═══
+function renderAnalysis() {
+  var sessions = Object.values(state.sessions);
+  var el = document.getElementById("analysis-content");
+
+  if (sessions.length === 0) {
+    el.innerHTML = '<div class="no-data" style="padding:4rem 1rem">' +
+      '<div style="font-size:48px;margin-bottom:12px">📊</div>' +
+      '<div style="font-size:15px;color:var(--text-dim);margin-bottom:8px">No sessions logged yet</div>' +
+      '<div style="font-size:13px">Complete some workouts and come back here to see your progress.</div>' +
+      '</div>';
+    return;
+  }
+
+  var html = "";
+
+  // Link to standalone analysis page
+  html += '<div class="link-banner">' +
+    '<div><div class="link-banner-text">Full analysis dashboard</div>' +
+    '<div class="link-banner-url">rjah-labs.github.io/mitch-fitness/analysis.html</div></div>' +
+    '<button class="link-banner-copy" onclick="window.open(\'analysis.html\',\'_blank\')">OPEN ↗</button>' +
+    '</div>';
+
+  // OVERVIEW STATS
+  var totalSessions = sessions.length;
+  var totalSets = 0;
+  var totalKg = 0;
+  var uniqueWorkouts = new Set();
+  sessions.forEach(function(s) {
+    uniqueWorkouts.add(s.workoutId);
+    Object.values(s.exercises || {}).forEach(function(sets) {
+      if (Array.isArray(sets)) {
+        sets.forEach(function(set) {
+          if (set.done) {
+            totalSets++;
+            if (set.kg) totalKg += parseFloat(set.kg) * (parseInt(set.reps) || 1);
+          }
+        });
+      }
+    });
+  });
+
+  // Streak
+  var streak = calcStreak(sessions);
+  var totalTons = (totalKg / 1000).toFixed(1);
+
+  html += '<div class="analysis-stat-grid">';
+  html += '<div class="analysis-stat"><div class="analysis-stat-val purple">' + totalSessions + '</div><div class="analysis-stat-lbl">SESSIONS</div></div>';
+  html += '<div class="analysis-stat"><div class="analysis-stat-val green">' + streak + '</div><div class="analysis-stat-lbl">DAY STREAK</div></div>';
+  html += '<div class="analysis-stat"><div class="analysis-stat-val amber">' + totalSets + '</div><div class="analysis-stat-lbl">TOTAL SETS</div></div>';
+  html += '<div class="analysis-stat"><div class="analysis-stat-val pink">' + totalTons + 't</div><div class="analysis-stat-lbl">TOTAL VOLUME</div></div>';
+  html += '</div>';
+
+  // FREQUENCY HEATMAP (last 10 weeks)
+  html += '<div class="analysis-section">';
+  html += '<div class="analysis-section-title">Training frequency — last 10 weeks</div>';
+  html += '<div class="chart-wrap">';
+  html += buildFrequencyGrid(sessions);
+  html += '</div></div>';
+
+  // WORKOUT BREAKDOWN
+  html += '<div class="analysis-section">';
+  html += '<div class="analysis-section-title">Sessions by workout</div>';
+  html += '<div class="chart-wrap">';
+  html += buildWorkoutBreakdown(sessions);
+  html += '</div></div>';
+
+  // PERSONAL RECORDS
+  html += '<div class="analysis-section">';
+  html += '<div class="analysis-section-title">Personal records</div>';
+  html += buildPRList(sessions);
+  html += '</div>';
+
+  // WEIGHT PROGRESSION
+  html += '<div class="analysis-section">';
+  html += '<div class="analysis-section-title">Weight progression</div>';
+  html += '<div class="chart-wrap">';
+  html += '<div class="chart-sub">Select an exercise to see your weight over time</div>';
+  html += buildExercisePicker(sessions);
+  html += '<div id="progression-chart"></div>';
+  html += '</div></div>';
+
+  // VOLUME PER SESSION
+  html += '<div class="analysis-section">';
+  html += '<div class="analysis-section-title">Session volume (kg moved)</div>';
+  html += '<div class="chart-wrap">';
+  html += buildVolumeChart(sessions);
+  html += '</div></div>';
+
+  el.innerHTML = html;
+
+  // Render default exercise chart if exercises exist
+  var firstEx = getTopExercise(sessions);
+  if (firstEx) {
+    document.getElementById("ex-picker").value = firstEx;
+    renderProgressionChart(firstEx, sessions);
+  }
+}
+
+function calcStreak(sessions) {
+  if (!sessions.length) return 0;
+  var dates = sessions.map(function(s) {
+    return new Date(s.date).toDateString();
+  });
+  var unique = Array.from(new Set(dates)).sort(function(a,b) { return new Date(b)-new Date(a); });
+  var streak = 0;
+  var today = new Date();
+  for (var i = 0; i < unique.length; i++) {
+    var d = new Date(unique[i]);
+    var diff = Math.round((today - d) / (1000*60*60*24));
+    if (diff === i || diff === i+1) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function buildFrequencyGrid(sessions) {
+  var sessionDates = {};
+  sessions.forEach(function(s) {
+    var d = new Date(s.date).toDateString();
+    sessionDates[d] = (sessionDates[d] || 0) + 1;
+  });
+
+  var today = new Date();
+  var startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 69); // 10 weeks back
+  // Align to Sunday
+  var dayOfWeek = startDate.getDay();
+  startDate.setDate(startDate.getDate() - dayOfWeek);
+
+  var days = ['S','M','T','W','T','F','S'];
+  var html = '<div class="freq-day-labels">';
+  days.forEach(function(d) { html += '<div class="freq-day-lbl">' + d + '</div>'; });
+  html += '</div><div class="freq-grid">';
+
+  var cur = new Date(startDate);
+  for (var i = 0; i < 70; i++) {
+    var key = cur.toDateString();
+    var count = sessionDates[key] || 0;
+    var lvl = count === 0 ? '' : count === 1 ? 'l1' : count === 2 ? 'l2' : count === 3 ? 'l3' : 'l4';
+    var isFuture = cur > today;
+    html += '<div class="freq-cell ' + (isFuture ? '' : lvl) + '" title="' + key + (count ? ': ' + count + ' session(s)' : '') + '"></div>';
+    cur.setDate(cur.getDate() + 1);
+  }
+  html += '</div>';
+  return html;
+}
+
+function buildWorkoutBreakdown(sessions) {
+  var counts = {};
+  sessions.forEach(function(s) {
+    var name = s.workoutName || s.workoutId || 'Unknown';
+    counts[name] = (counts[name] || 0) + 1;
+  });
+  var entries = Object.entries(counts).sort(function(a,b) { return b[1]-a[1]; });
+  var max = entries.length ? entries[0][1] : 1;
+  var html = '<div class="workout-breakdown">';
+  entries.forEach(function(e) {
+    var pct = Math.round((e[1]/max)*100);
+    html += '<div class="wb-item"><div><div class="wb-name">' + e[0] + '</div>' +
+      '<div class="wb-bar" style="width:' + pct + '%"></div></div>' +
+      '<div class="wb-count">' + e[1] + 'x</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildPRList(sessions) {
+  var prs = {};
+  var prDates = {};
+  sessions.forEach(function(s) {
+    Object.entries(s.exercises || {}).forEach(function(entry) {
+      var name = entry[0];
+      var sets = entry[1];
+      if (Array.isArray(sets)) {
+        sets.forEach(function(set) {
+          if (set.done && set.kg) {
+            var w = parseFloat(set.kg);
+            if (!prs[name] || w > prs[name]) {
+              prs[name] = w;
+              prDates[name] = new Date(s.date).toLocaleDateString('en-AU', {day:'numeric',month:'short'});
+            }
+          }
+        });
+      }
+    });
+  });
+  var entries = Object.entries(prs).sort(function(a,b) { return b[1]-a[1]; });
+  if (!entries.length) return '<div class="no-data">No PR data yet</div>';
+  var html = '<div class="pr-list">';
+  entries.forEach(function(e) {
+    html += '<div class="pr-item"><div class="pr-name">' + e[0] + '<div class="pr-date">' + (prDates[e[0]]||'') + '</div></div>' +
+      '<div class="pr-val">' + e[1] + 'kg</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function getTopExercise(sessions) {
+  var counts = {};
+  sessions.forEach(function(s) {
+    Object.keys(s.exercises||{}).forEach(function(n) {
+      if (Array.isArray(s.exercises[n])) counts[n] = (counts[n]||0)+1;
+    });
+  });
+  var sorted = Object.entries(counts).sort(function(a,b){return b[1]-a[1];});
+  return sorted.length ? sorted[0][0] : null;
+}
+
+function buildExercisePicker(sessions) {
+  var names = new Set();
+  sessions.forEach(function(s) {
+    Object.entries(s.exercises||{}).forEach(function(e) {
+      if (Array.isArray(e[1])) names.add(e[0]);
+    });
+  });
+  var html = '<select class="chart-select" id="ex-picker" onchange="renderProgressionChart(this.value)">';
+  Array.from(names).sort().forEach(function(n) {
+    html += '<option value="' + n + '">' + n + '</option>';
+  });
+  html += '</select>';
+  return html;
+}
+
+function renderProgressionChart(exName, sessions) {
+  if (!sessions) sessions = Object.values(state.sessions);
+  var points = [];
+  sessions.forEach(function(s) {
+    var sets = s.exercises && s.exercises[exName];
+    if (Array.isArray(sets) && sets.length) {
+      var best = null;
+      sets.forEach(function(set) {
+        if (set.done && set.kg) {
+          var w = parseFloat(set.kg);
+          if (!best || w > best) best = w;
+        }
+      });
+      if (best) {
+        points.push({ date: new Date(s.date), val: best });
+      }
+    }
+  });
+  points.sort(function(a,b){ return a.date-b.date; });
+
+  var chartEl = document.getElementById("progression-chart");
+  if (!chartEl) return;
+
+  if (points.length < 2) {
+    chartEl.innerHTML = '<div class="no-data">Need at least 2 sessions to show a trend</div>';
+    return;
+  }
+
+  var maxVal = Math.max.apply(null, points.map(function(p){return p.val;}));
+  var minVal = Math.min.apply(null, points.map(function(p){return p.val;}));
+  var range = maxVal - minVal || 1;
+  var W = 300; var H = 100; var PAD = 20;
+  var innerW = W - PAD*2; var innerH = H - PAD*2;
+
+  var coords = points.map(function(p, i) {
+    var x = PAD + (i/(points.length-1))*innerW;
+    var y = PAD + (1 - (p.val-minVal)/range)*innerH;
+    return {x:x, y:y, val:p.val, date:p.date};
+  });
+
+  var pathD = coords.map(function(c,i){return (i===0?'M':'L')+c.x.toFixed(1)+','+c.y.toFixed(1);}).join(' ');
+  var areaD = pathD + ' L'+(PAD+innerW).toFixed(1)+','+(PAD+innerH).toFixed(1)+' L'+PAD+','+(PAD+innerH).toFixed(1)+' Z';
+
+  var dotsHtml = coords.map(function(c) {
+    return '<circle cx="'+c.x.toFixed(1)+'" cy="'+c.y.toFixed(1)+'" r="3" fill="var(--purple)" title="'+c.val+'kg on '+c.date.toLocaleDateString('en-AU',{day:'numeric',month:'short'})+'"/>';
+  }).join('');
+
+  // Labels
+  var firstLbl = points[0].date.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+  var lastLbl = points[points.length-1].date.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+  var trend = points[points.length-1].val - points[0].val;
+  var trendStr = trend >= 0 ? '+' + trend.toFixed(1) + 'kg' : trend.toFixed(1) + 'kg';
+  var trendCol = trend >= 0 ? 'var(--green-light)' : 'var(--red)';
+
+  chartEl.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text-muted)">' + firstLbl + '</span>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:'+trendCol+'">'+trendStr+' overall</span>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text-muted)">' + lastLbl + '</span>' +
+    '</div>' +
+    '<div class="line-chart">' +
+    '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">' +
+      '<defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="var(--purple)" stop-opacity="0.3"/>' +
+        '<stop offset="100%" stop-color="var(--purple)" stop-opacity="0"/>' +
+      '</linearGradient></defs>' +
+      '<path d="'+areaD+'" fill="url(#lg)"/>' +
+      '<path d="'+pathD+'" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linejoin="round"/>' +
+      dotsHtml +
+    '</svg></div>' +
+    '<div style="display:flex;justify-content:space-between;margin-top:4px">' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--text-muted)">LOW '+minVal+'kg</span>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--amber)">BEST '+maxVal+'kg</span>' +
+    '</div>';
+}
+
+function buildVolumeChart(sessions) {
+  var sorted = sessions.slice().sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+  var last12 = sorted.slice(-12);
+  if (!last12.length) return '<div class="no-data">No sessions yet</div>';
+
+  var volumes = last12.map(function(s) {
+    var vol = 0;
+    Object.values(s.exercises||{}).forEach(function(sets) {
+      if (Array.isArray(sets)) {
+        sets.forEach(function(set) {
+          if (set.done && set.kg && set.reps) vol += parseFloat(set.kg) * parseInt(set.reps);
+        });
+      }
+    });
+    return { date: new Date(s.date), vol: vol, name: s.workoutName || '' };
+  });
+
+  var maxVol = Math.max.apply(null, volumes.map(function(v){return v.vol;})) || 1;
+  var html = '<div class="bar-chart">';
+  volumes.forEach(function(v) {
+    var pct = Math.round((v.vol/maxVol)*100);
+    var lbl = v.date.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+    var volStr = v.vol >= 1000 ? (v.vol/1000).toFixed(1)+'t' : v.vol+'kg';
+    html += '<div class="bar-row">' +
+      '<span class="bar-label">' + lbl + '</span>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--purple)">' +
+        '<span class="bar-fill-val">' + volStr + (v.name ? ' \u00b7 '+v.name.substring(0,12) : '') + '</span>' +
+      '</div></div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+// Make renderProgressionChart callable from select onchange
+window.renderProgressionChart = function(exName) {
+  renderProgressionChart(exName, Object.values(state.sessions));
+};
 
 // ═══ INIT ═══
 updateHeroSub();
