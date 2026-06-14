@@ -349,7 +349,7 @@
 <!-- EXERCISE PICKER -->
 <div class="screen" id="screen-picker">
   <div class="topbar">
-    <button class="topbar-back" onclick="goBuilder(null)">&#8592;</button>
+    <button class="topbar-back" onclick="returnToBuilder()">&#8592;</button>
     <div class="topbar-title">Add Exercise</div>
   </div>
   <div class="scroll">
@@ -711,8 +711,14 @@ function addExerciseToBuilder(name) {
   if (!exCopy.defaultSets) exCopy.defaultSets = 4;
   if (!exCopy.defaultReps) exCopy.defaultReps = 10;
   state.builderExercises.push(exCopy);
-  showToast(name + " added", "success");
-  goBuilder(null);
+  showToast(name + " added \u2713", "success");
+  returnToBuilder();
+}
+
+function returnToBuilder() {
+  // Go back to builder without resetting name or exercises
+  renderBuilderExercises();
+  showScreen("builder");
 }
 
 // ═══ SESSION ═══
