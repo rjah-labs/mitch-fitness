@@ -1,0 +1,125 @@
+{
+  "workoutId": "workout_1781433906700",
+  "workoutName": "Glutes & Quads",
+  "date": "2026-07-01T09:12:07.062Z",
+  "notes": "2 extra sets at 3 reps 60kg count of 4 up and down. \n\nFucked legs are cooked but good feeling. Struggled to do the 2 I missed as new gym in Moranbah ",
+  "exercises": {
+    "Barbell hip thrust": [
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      }
+    ],
+    "Back squat": [
+      {
+        "kg": "60",
+        "reps": "12",
+        "done": true
+      },
+      {
+        "kg": "80",
+        "reps": "10",
+        "done": true
+      },
+      {
+        "kg": "90",
+        "reps": "10",
+        "done": true
+      },
+      {
+        "kg": "90",
+        "reps": "9",
+        "done": true
+      }
+    ],
+    "Leg press": [
+      {
+        "kg": "90",
+        "reps": "12",
+        "done": true
+      },
+      {
+        "kg": "110",
+        "reps": "12",
+        "done": true
+      },
+      {
+        "kg": "110",
+        "reps": "12",
+        "done": true
+      },
+      {
+        "kg": "130",
+        "reps": "8",
+        "done": true
+      }
+    ],
+    "Walking lunges (dumbbells)": [
+      {
+        "kg": "12.5",
+        "reps": "20",
+        "done": true
+      },
+      {
+        "kg": "15",
+        "reps": "20",
+        "done": true
+      },
+      {
+        "kg": "17.5",
+        "reps": "20",
+        "done": true
+      }
+    ],
+    "Hip abduction machine": [
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      }
+    ],
+    "Leg extension": [
+      {
+        "kg": "32",
+        "reps": "12",
+        "done": true
+      },
+      {
+        "kg": "32",
+        "reps": "15",
+        "done": true
+      },
+      {
+        "kg": "32",
+        "reps": "15",
+        "done": true
+      }
+    ]
+  }
+}
