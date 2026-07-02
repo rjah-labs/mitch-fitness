@@ -1,0 +1,147 @@
+{
+  "workoutId": "workout_1781434036484",
+  "workoutName": "Upper Push",
+  "date": "2026-07-02T08:45:10.152Z",
+  "notes": "Overhead triceps was one dumbbell not cable ",
+  "exercises": {
+    "Incline bench press": [
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      }
+    ],
+    "Dumbbell bench press": [
+      {
+        "kg": "22.5",
+        "reps": "8",
+        "done": true
+      },
+      {
+        "kg": "22.5",
+        "reps": "8",
+        "done": true
+      },
+      {
+        "kg": "22.5",
+        "reps": "8",
+        "done": true
+      },
+      {
+        "kg": "25",
+        "reps": "8",
+        "done": true
+      }
+    ],
+    "Dumbbell shoulder press": [
+      {
+        "kg": "15",
+        "reps": "8",
+        "done": true
+      },
+      {
+        "kg": "15",
+        "reps": "8",
+        "done": true
+      },
+      {
+        "kg": "15",
+        "reps": "8",
+        "done": true
+      },
+      {
+        "kg": "15",
+        "reps": "8",
+        "done": true
+      }
+    ],
+    "Lateral raises": [
+      {
+        "kg": "8",
+        "reps": "15",
+        "done": true
+      },
+      {
+        "kg": "8",
+        "reps": "15",
+        "done": true
+      },
+      {
+        "kg": "8",
+        "reps": "12",
+        "done": true
+      },
+      {
+        "kg": "8",
+        "reps": "12",
+        "done": true
+      }
+    ],
+    "Cable chest fly": [
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      },
+      {
+        "kg": "",
+        "reps": "",
+        "done": false
+      }
+    ],
+    "Tricep pushdown (cable)": [
+      {
+        "kg": "23",
+        "reps": "15",
+        "done": true
+      },
+      {
+        "kg": "34",
+        "reps": "12",
+        "done": true
+      },
+      {
+        "kg": "39.5",
+        "reps": "12",
+        "done": true
+      }
+    ],
+    "Overhead tricep extension": [
+      {
+        "kg": "15",
+        "reps": "12",
+        "done": true
+      },
+      {
+        "kg": "15",
+        "reps": "11",
+        "done": true
+      },
+      {
+        "kg": "15",
+        "reps": "12",
+        "done": true
+      }
+    ]
+  }
+}
